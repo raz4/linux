@@ -116,6 +116,22 @@ struct capability_info exitctrls[14] =
 	{29, "Load PKRS"}
 };
 
+struct capability_info entryctrls[12] =
+{
+	{2, "Load Debug Controls"},
+	{9, "IA-32e Mode Guest"},
+	{10, "Entry to SMM"},
+	{11, "Deactivate Dual-Monitor Treatment"},
+	{13, "Load IA32_PERF_GLOBAL_CTRL"},
+	{14, "Load IA32_PAT"},
+	{15, "Load IA32_EFER"},
+	{16, "Load IA32_BNDCFGS"},
+	{17, "Conceal VMS from PT"},
+	{18, "Load IA32_RTIT_CTL"},
+	{20, "Load CET State"},
+	{22, "Load PKRS"}
+};
+
 /*
  * report_capability
  *
@@ -181,6 +197,12 @@ detect_vmx_features(void)
         pr_info("Exit Controls MSR: 0x%llx\n",
                 (uint64_t)(lo | (uint64_t)hi << 32));
         report_capability(exitctrls, 14, lo, hi);
+
+	/* Entry controls */
+	rdmsr(IA32_VMX_ENTRY_CTLS, lo, hi);
+        pr_info("Entry Controls MSR: 0x%llx\n",
+                (uint64_t)(lo | (uint64_t)hi << 32));
+        report_capability(entryctrls, 12, lo, hi);
 }
 
 /*
