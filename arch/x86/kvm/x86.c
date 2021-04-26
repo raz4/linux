@@ -9309,12 +9309,13 @@ static int vcpu_run(struct kvm_vcpu *vcpu)
 		if (kvm_vcpu_running(vcpu)) {
 			if (init_cycles == 0) {
 				init_cycles = rdtsc();
+			} else {
+				atomic64_add(rdtsc() - init_cycles - cycles_spent_in_guest, &total_exit_cycles);
 			}
 			start_cycles = rdtsc();
 			r = vcpu_enter_guest(vcpu);
 			end_cycles = rdtsc();
 			cycles_spent_in_guest += end_cycles - start_cycles;
-			atomic64_add(rdtsc() - init_cycles - cycles_spent_in_guest, &total_exit_cycles);
 		} else {
 			r = vcpu_block(kvm, vcpu);
 		}
