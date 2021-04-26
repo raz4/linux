@@ -1139,14 +1139,19 @@ int kvm_emulate_cpuid(struct kvm_vcpu *vcpu)
 	eax = kvm_rax_read(vcpu);
 	if (eax == 0x4FFFFFFF) {
 		printk("Detected 0x4FFFFFFF in EAX!");
+		kvm_rax_write(vcpu, atomic_read(&total_exits));
+		kvm_rbx_write(vcpu, ((atomic64_read(&total_exit_cycles)<<32)>>32));
+		kvm_rcx_write(vcpu, (atomic64_read(&total_exit_cycles)>>32));
+	}
+	else {
+		ecx = kvm_rcx_read(vcpu);
+		kvm_cpuid(vcpu, &eax, &ebx, &ecx, &edx, false);
+		kvm_rax_write(vcpu, eax);
+		kvm_rbx_write(vcpu, ebx);
+		kvm_rcx_write(vcpu, ecx);
+		kvm_rdx_write(vcpu, edx);
 	}
 
-	ecx = kvm_rcx_read(vcpu);
-	kvm_cpuid(vcpu, &eax, &ebx, &ecx, &edx, false);
-	kvm_rax_write(vcpu, eax);
-	kvm_rbx_write(vcpu, ebx);
-	kvm_rcx_write(vcpu, ecx);
-	kvm_rdx_write(vcpu, edx);
 	return kvm_skip_emulated_instruction(vcpu);
 }
 EXPORT_SYMBOL_GPL(kvm_emulate_cpuid);
