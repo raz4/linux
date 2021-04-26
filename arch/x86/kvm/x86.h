@@ -283,6 +283,8 @@ extern u64 host_xcr0;
 extern u64 supported_xcr0;
 extern u64 host_xss;
 extern u64 supported_xss;
+extern atomic_t total_exits;
+extern atomic64_t total_exit_cycles;
 
 static inline bool kvm_mpx_supported(void)
 {

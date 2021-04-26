@@ -7987,6 +7987,9 @@ static struct notifier_block pvclock_gtod_notifier = {
 };
 #endif
 
+atomic_t __read_mostly total_exits;
+atomic64_t __read_mostly total_exit_cycles;
+
 int kvm_arch_init(void *opaque)
 {
 	struct kvm_x86_init_ops *ops = opaque;
@@ -8065,6 +8068,9 @@ int kvm_arch_init(void *opaque)
 	if (hypervisor_is_type(X86_HYPER_MS_HYPERV))
 		set_hv_tscchange_cb(kvm_hyperv_tsc_notifier);
 #endif
+
+	atomic_set(&total_exits, 0);
+	atomic64_set(&total_exit_cycles, 0);
 
 	return 0;
 
@@ -9198,6 +9204,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
 	kvm_before_interrupt(vcpu);
 	local_irq_enable();
 	++vcpu->stat.exits;
+	atomic_add(1, &total_exits);
 	local_irq_disable();
 	kvm_after_interrupt(vcpu);
 
@@ -9288,13 +9295,19 @@ static int vcpu_run(struct kvm_vcpu *vcpu)
 {
 	int r;
 	struct kvm *kvm = vcpu->kvm;
+	u64 start_cycles;
+	u64 cycles_spent_in_guest;
+	cycles_spent_in_guest = 0;
 
 	vcpu->srcu_idx = srcu_read_lock(&kvm->srcu);
 	vcpu->arch.l1tf_flush_l1d = true;
 
 	for (;;) {
 		if (kvm_vcpu_running(vcpu)) {
+			start_cycles = rdtsc();
 			r = vcpu_enter_guest(vcpu);
+			cycles_spent_in_guest += rdtsc() - start_cycles;
+			atomic64_add(rdtsc() - cycles_spent_in_guest, &total_exit_cycles);
 		} else {
 			r = vcpu_block(kvm, vcpu);
 		}
