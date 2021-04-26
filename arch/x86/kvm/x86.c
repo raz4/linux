@@ -9295,19 +9295,26 @@ static int vcpu_run(struct kvm_vcpu *vcpu)
 {
 	int r;
 	struct kvm *kvm = vcpu->kvm;
+	u64 init_cycles;
 	u64 start_cycles;
+	u64 end_cycles;
 	u64 cycles_spent_in_guest;
 	cycles_spent_in_guest = 0;
+	init_cycles = 0;
 
 	vcpu->srcu_idx = srcu_read_lock(&kvm->srcu);
 	vcpu->arch.l1tf_flush_l1d = true;
 
 	for (;;) {
 		if (kvm_vcpu_running(vcpu)) {
+			if (init_cycles == 0) {
+				init_cycles = rdtsc();
+			}
 			start_cycles = rdtsc();
 			r = vcpu_enter_guest(vcpu);
-			cycles_spent_in_guest += rdtsc() - start_cycles;
-			atomic64_add(rdtsc() - cycles_spent_in_guest, &total_exit_cycles);
+			end_cycles = rdtsc();
+			cycles_spent_in_guest += end_cycles - start_cycles;
+			atomic64_add(rdtsc() - init_cycles - cycles_spent_in_guest, &total_exit_cycles);
 		} else {
 			r = vcpu_block(kvm, vcpu);
 		}
