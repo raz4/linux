@@ -19,7 +19,7 @@ exit_cycles = current_cycles - init_cycles - cycles_spent_in_guest
 ```
 This value is added to the 64-bit atomic variable "total_exit_cycles" which is used to fill %ebx and %ecx.
 
-To test out the new CPUID emulation, the modified kernel was compiled and installed on a VM running Ubuntu 20.04 Desktop. Within this VM, another nested VM was created using virt-manager (GUI) and ran Ubuntu 20.04 Server. A test program was executed in the nested VM which sets the %eax register appropriately and calls the CPUID instruction. The contents of registers %eax, %ebx, and %ecx are printed out for validating and debugging purposes.
+To test out the new CPUID emulation, the modified kernel was compiled and installed on a VM running Ubuntu 20.04 Desktop. Within this VM, another nested VM was created using virt-manager (GUI) and ran Ubuntu 20.04 Server. A [test program](test_cpuid/prog.c) was executed in the nested VM which sets the %eax register appropriately and calls the CPUID instruction. The contents of registers %eax, %ebx, and %ecx are printed out for validating and debugging purposes.
 
 ### Architecture Diagram of Testing Environment
 ![Testing Architecture](environment.png)
