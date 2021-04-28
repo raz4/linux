@@ -9096,6 +9096,13 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
 	local_irq_disable();
 	vcpu->mode = IN_GUEST_MODE;
 
+	if (vcpu->stat.init_cycles == 0) {
+		vcpu->stat.init_cycles = rdtsc();
+	} else {
+		atomic64_add(rdtsc() - vcpu->stat.init_cycles - vcpu->stat.cycles_spent_in_guest, &total_exit_cycles);
+	}
+	vcpu->stat.start_cycles = rdtsc();
+
 	srcu_read_unlock(&vcpu->kvm->srcu, vcpu->srcu_idx);
 
 	/*
@@ -9188,6 +9195,9 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
 
 	vcpu->arch.last_vmentry_cpu = vcpu->cpu;
 	vcpu->arch.last_guest_tsc = kvm_read_l1_tsc(vcpu, rdtsc());
+
+	vcpu->stat.end_cycles = rdtsc();
+	vcpu->stat.cycles_spent_in_guest += vcpu->stat.end_cycles - vcpu->stat.start_cycles;
 
 	vcpu->mode = OUTSIDE_GUEST_MODE;
 	smp_wmb();
@@ -9295,27 +9305,15 @@ static int vcpu_run(struct kvm_vcpu *vcpu)
 {
 	int r;
 	struct kvm *kvm = vcpu->kvm;
-	u64 init_cycles;
-	u64 start_cycles;
-	u64 end_cycles;
-	u64 cycles_spent_in_guest;
-	cycles_spent_in_guest = 0;
-	init_cycles = 0;
+	vcpu->stat.cycles_spent_in_guest = 0;
+	vcpu->stat.init_cycles = 0;
 
 	vcpu->srcu_idx = srcu_read_lock(&kvm->srcu);
 	vcpu->arch.l1tf_flush_l1d = true;
 
 	for (;;) {
 		if (kvm_vcpu_running(vcpu)) {
-			if (init_cycles == 0) {
-				init_cycles = rdtsc();
-			} else {
-				atomic64_add(rdtsc() - init_cycles - cycles_spent_in_guest, &total_exit_cycles);
-			}
-			start_cycles = rdtsc();
 			r = vcpu_enter_guest(vcpu);
-			end_cycles = rdtsc();
-			cycles_spent_in_guest += end_cycles - start_cycles;
 		} else {
 			r = vcpu_block(kvm, vcpu);
 		}

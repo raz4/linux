@@ -1143,6 +1143,10 @@ struct kvm_vcpu_stat {
 	u64 req_event;
 	u64 halt_poll_success_ns;
 	u64 halt_poll_fail_ns;
+	u64 init_cycles; // tsc when guest was first run
+	u64 start_cycles; // tsc before guest is run
+	u64 end_cycles; // tsc after guest has exited
+	u64 cycles_spent_in_guest; // total cycles spent in guest
 };
 
 struct x86_instruction_info;
