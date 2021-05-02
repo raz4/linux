@@ -7989,11 +7989,13 @@ static struct notifier_block pvclock_gtod_notifier = {
 
 atomic_t __read_mostly total_exits;
 atomic64_t __read_mostly total_exit_cycles;
+atomic_t __read_mostly exit_reason_count[70];
 
 int kvm_arch_init(void *opaque)
 {
 	struct kvm_x86_init_ops *ops = opaque;
 	int r;
+	u16 i;
 
 	if (kvm_x86_ops.hardware_enable) {
 		printk(KERN_ERR "kvm: already loaded the other module\n");
@@ -8071,6 +8073,10 @@ int kvm_arch_init(void *opaque)
 
 	atomic_set(&total_exits, 0);
 	atomic64_set(&total_exit_cycles, 0);
+
+	for (i = 0; i < 70; i++) {
+		atomic_set(&exit_reason_count[i], 0);
+	}
 
 	return 0;
 
@@ -9314,6 +9320,10 @@ static int vcpu_run(struct kvm_vcpu *vcpu)
 	for (;;) {
 		if (kvm_vcpu_running(vcpu)) {
 			r = vcpu_enter_guest(vcpu);
+			// (vcpu->run->hw.hardware_exit_reason & 0xFFFF)
+			if ((vcpu->stat.arch_exit_reason & 0xFFFF) < 70 && (vcpu->stat.arch_exit_reason & 0xFFFF) >= 0) {
+				atomic_add(1, &exit_reason_count[(vcpu->stat.arch_exit_reason & 0xFFFF)]);
+			}
 		} else {
 			r = vcpu_block(kvm, vcpu);
 		}
