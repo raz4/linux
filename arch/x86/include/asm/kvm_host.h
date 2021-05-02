@@ -1147,6 +1147,7 @@ struct kvm_vcpu_stat {
 	u64 start_cycles; // tsc before guest is run
 	u64 end_cycles; // tsc after guest has exited
 	u64 cycles_spent_in_guest; // total cycles spent in guest
+	u64 arch_exit_reason;
 };
 
 struct x86_instruction_info;

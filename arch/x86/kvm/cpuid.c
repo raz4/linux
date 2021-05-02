@@ -1143,6 +1143,12 @@ int kvm_emulate_cpuid(struct kvm_vcpu *vcpu)
 		kvm_rcx_write(vcpu, ((atomic64_read(&total_exit_cycles)<<32)>>32));
 		kvm_rbx_write(vcpu, (atomic64_read(&total_exit_cycles)>>32));
 	}
+	else if (eax == 0x4FFFFFFE) {
+		printk("Detected 0x4FFFFFFE in EAX!");
+		ecx = kvm_rcx_read(vcpu);
+		printk("Value in ECX: %u", ecx);
+		kvm_rax_write(vcpu, atomic_read(&exit_reason_count[ecx]));
+	}
 	else {
 		ecx = kvm_rcx_read(vcpu);
 		kvm_cpuid(vcpu, &eax, &ebx, &ecx, &edx, false);
