@@ -9320,7 +9320,6 @@ static int vcpu_run(struct kvm_vcpu *vcpu)
 	for (;;) {
 		if (kvm_vcpu_running(vcpu)) {
 			r = vcpu_enter_guest(vcpu);
-			// (vcpu->run->hw.hardware_exit_reason & 0xFFFF)
 			if ((vcpu->stat.arch_exit_reason & 0xFFFF) < 70 && (vcpu->stat.arch_exit_reason & 0xFFFF) >= 0) {
 				atomic_add(1, &exit_reason_count[(vcpu->stat.arch_exit_reason & 0xFFFF)]);
 			}
