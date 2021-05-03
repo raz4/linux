@@ -1146,8 +1146,16 @@ int kvm_emulate_cpuid(struct kvm_vcpu *vcpu)
 	else if (eax == 0x4FFFFFFE) {
 		printk("Detected 0x4FFFFFFE in EAX!");
 		ecx = kvm_rcx_read(vcpu);
-		printk("Value in ECX: %u", ecx);
-		kvm_rax_write(vcpu, atomic_read(&exit_reason_count[ecx]));
+		// check if ecx exit reason is not defined in SDM
+		if (ecx > 69 || ecx == 35 || ecx == 38 || ecx == 42 || ecx == 65) {
+			kvm_rax_write(vcpu, 0);
+			kvm_rdx_write(vcpu, 0xFFFFFFFF);
+		} else {
+			kvm_rax_write(vcpu, atomic_read(&exit_reason_count[ecx]));
+			kvm_rdx_write(vcpu, 0);
+		}
+		kvm_rbx_write(vcpu, 0);
+		kvm_rcx_write(vcpu, 0);
 	}
 	else {
 		ecx = kvm_rcx_read(vcpu);
