@@ -1150,12 +1150,21 @@ int kvm_emulate_cpuid(struct kvm_vcpu *vcpu)
 		if (ecx > 69 || ecx == 35 || ecx == 38 || ecx == 42 || ecx == 65) {
 			kvm_rax_write(vcpu, 0);
 			kvm_rdx_write(vcpu, 0xFFFFFFFF);
+			kvm_rbx_write(vcpu, 0);
+			kvm_rcx_write(vcpu, 0);
 		} else {
-			kvm_rax_write(vcpu, atomic_read(&exit_reason_count[ecx]));
-			kvm_rdx_write(vcpu, 0);
+			// check if ecx exit reason is not enabled by KVM
+			if (ecx == 7 || ecx == 8 || ecx == 14 || ecx == 16 ||
+				ecx == 36 || ecx == 44 || ecx == 60 || ecx ==69) {
+				kvm_rax_write(vcpu, 0);
+				kvm_rbx_write(vcpu, 0);
+				kvm_rcx_write(vcpu, 0);
+				kvm_rdx_write(vcpu, 0);
+			}
+			else {
+				kvm_rax_write(vcpu, atomic_read(&exit_reason_count[ecx]));
+			}
 		}
-		kvm_rbx_write(vcpu, 0);
-		kvm_rcx_write(vcpu, 0);
 	}
 	else {
 		ecx = kvm_rcx_read(vcpu);
