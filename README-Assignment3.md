@@ -1,0 +1,7 @@
+## Instrumentation via hypercall
+
+1. NULL
+
+2. First, an if statement was added to the "kvm_emulate_cpuid" function where %ecx register is read which contains the exit reason. In order to determine if this exit reason is defined in the SDM, the value is compared with the list of exit reasons provided in Volume 3 Appendix C of the SDM. If the exit reason is not in the SDM, 0xFFFFFFFF is returned in %edx and 0 in %eax, %ebx, %ecx. In order to determine which exit controls KVM has NOT enabled, the following variables "_pin_based_exec_control", "_cpu_based_exec_control", and "_cpu_based_2nd_exec_control" found in "setup_vmcs_config" function in "vmx.c" file were printed to the kernel log. The values of these variables were then compared with the reference provided in Chapter 24.6 "VM-EXECUTION CONTROL FIELDS" in Volume 3 of the SDM. Based on this, the exits not enabled by KVM were determined and checked for in the CPUID leaf function. If the exit number was not enabled by KVM, 0 was returned in %eax, %ebx, %ecx, %edx. Otherwise, %eax will contain the total number of exits for the exit number in %ecx. To keep track of the total number of exits, an array of 70 atomic variables is stored and initialized with 0. In the "__vmx_handle_exit" function in "vmx.c" file, the exit reason found in "exit_reason.basic" is captured in the "vcpu" structure. Based on this value, the corresponding atomic variable in the array is incremented by 1 on every exit.
+
+3. Some exits increase at a stable while others do not...TODO
