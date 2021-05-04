@@ -1,0 +1,77 @@
+Testing 0x4FFFFFFF...
+Value in eax register is 587246
+Value in ebx register is 14277
+Value in ecx register is 2494582541
+
+Testing 0x4FFFFFFE...
+
+Exit Reason: 0, Count: 17853
+Exit Reason: 1, Count: 0
+Exit Reason: 2, Count: 0
+Exit Reason: 3, Count: 0
+Exit Reason: 4, Count: 0
+Exit Reason: 5, Count: 0
+Exit Reason: 6, Count: 0
+Exit Reason: 7, Count: 0
+Exit Reason: 8, Count: 0
+Exit Reason: 9, Count: 0
+Exit Reason: 10, Count: 139768
+Exit Reason: 11, Count: 0
+Exit Reason: 12, Count: 0
+Exit Reason: 13, Count: 0
+Exit Reason: 14, Count: 0
+Exit Reason: 15, Count: 0
+Exit Reason: 16, Count: 0
+Exit Reason: 17, Count: 0
+Exit Reason: 18, Count: 0
+Exit Reason: 19, Count: 0
+Exit Reason: 20, Count: 0
+Exit Reason: 21, Count: 0
+Exit Reason: 22, Count: 0
+Exit Reason: 23, Count: 0
+Exit Reason: 24, Count: 0
+Exit Reason: 25, Count: 0
+Exit Reason: 26, Count: 0
+Exit Reason: 27, Count: 0
+Exit Reason: 28, Count: 26739
+Exit Reason: 29, Count: 2
+Exit Reason: 30, Count: 240310
+Exit Reason: 31, Count: 5802
+Exit Reason: 32, Count: 0
+Exit Reason: 33, Count: 0
+Exit Reason: 34, Count: 0
+Exit Reason: 35, Count: 0
+Exit Reason: 36, Count: 0
+Exit Reason: 37, Count: 0
+Exit Reason: 38, Count: 0
+Exit Reason: 39, Count: 0
+Exit Reason: 40, Count: 10409
+Exit Reason: 41, Count: 0
+Exit Reason: 42, Count: 0
+Exit Reason: 43, Count: 0
+Exit Reason: 44, Count: 0
+Exit Reason: 45, Count: 0
+Exit Reason: 46, Count: 12
+Exit Reason: 47, Count: 2
+Exit Reason: 48, Count: 158497
+Exit Reason: 49, Count: 0
+Exit Reason: 50, Count: 0
+Exit Reason: 51, Count: 0
+Exit Reason: 52, Count: 0
+Exit Reason: 53, Count: 0
+Exit Reason: 54, Count: 3
+Exit Reason: 55, Count: 3
+Exit Reason: 56, Count: 0
+Exit Reason: 57, Count: 0
+Exit Reason: 58, Count: 0
+Exit Reason: 59, Count: 0
+Exit Reason: 60, Count: 0
+Exit Reason: 61, Count: 0
+Exit Reason: 62, Count: 0
+Exit Reason: 63, Count: 0
+Exit Reason: 64, Count: 0
+Exit Reason: 65, Count: 0
+Exit Reason: 66, Count: 0
+Exit Reason: 67, Count: 0
+Exit Reason: 68, Count: 0
+Exit Reason: 69, Count: 0
